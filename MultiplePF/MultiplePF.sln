@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiplePF", "MultiplePF.csproj", "{1EB34595-68D8-48F8-BEA5-CA01E4827544}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1EB34595-68D8-48F8-BEA5-CA01E4827544}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EB34595-68D8-48F8-BEA5-CA01E4827544}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EB34595-68D8-48F8-BEA5-CA01E4827544}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EB34595-68D8-48F8-BEA5-CA01E4827544}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {239C7095-6994-4C33-82E8-882EAD3F9477}
+	EndGlobalSection
+EndGlobal

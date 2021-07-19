@@ -1,0 +1,10 @@
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\obj\Debug\MultiplePF.csproj.AssemblyReference.cache
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\obj\Debug\MultiplePF.Form1.resources
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\obj\Debug\MultiplePF.Properties.Resources.resources
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\obj\Debug\MultiplePF.csproj.GenerateResource.cache
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\obj\Debug\MultiplePF.csproj.CoreCompileInputs.cache
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\bin\Debug\MultiplePF.exe.config
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\bin\Debug\MultiplePF.exe
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\bin\Debug\MultiplePF.pdb
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\obj\Debug\MultiplePF.exe
+C:\Users\18052\Documents\Visualization MultiplePF\MultiplePF\obj\Debug\MultiplePF.pdb
