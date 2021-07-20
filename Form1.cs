@@ -37,19 +37,8 @@ namespace MultiplePF
         public void create_simulation()
         {
             MyGlobals.shark_list.Add(MyGlobals.s1);
-            
-            Robot robot1 = new Robot();
-            robot1.Y = 0;
-            robot1.X = 45;
-            Robot robot2 = new Robot();
-            robot2.X = -100;
-            robot2.Y = 45;
-            Robot robot3 = new Robot();
-            robot3.X = 90;
-            robot3.Y = 90;
-            MyGlobals.robot_list.Add(robot1);
-            MyGlobals.robot_list.Add(robot2);
-            MyGlobals.robot_list.Add(robot3);
+
+            create_robots();
             particle_filter.create();
         }
 
