@@ -22,7 +22,7 @@ namespace MultiplePF
         List<double> w3xList_pf1 = new List<double>();
         List<double> w3yList_pf1 = new List<double>();
         ParticleFilter particle_filter = new ParticleFilter();
-
+        double NUMBER_OF_ROBOTS;
         Boolean stopHere = true;
         List<double> errorList = new List<double>();
         List<double> PredictedSharkXList = new List<double>();
@@ -37,14 +37,19 @@ namespace MultiplePF
         public void create_simulation()
         {
             MyGlobals.shark_list.Add(MyGlobals.s1);
+            
             Robot robot1 = new Robot();
             robot1.Y = 0;
             robot1.X = 45;
             Robot robot2 = new Robot();
             robot2.X = -100;
             robot2.Y = 45;
+            Robot robot3 = new Robot();
+            robot3.X = 90;
+            robot3.Y = 90;
             MyGlobals.robot_list.Add(robot1);
             MyGlobals.robot_list.Add(robot2);
+            MyGlobals.robot_list.Add(robot3);
             particle_filter.create();
         }
 
@@ -66,6 +71,15 @@ namespace MultiplePF
                 this.real_range_list.Add(real_range1);
             }
         }
+
+        public void create_robots()
+        {
+            for (int i = 0; i< NUMBER_OF_ROBOTS; i++)
+            {
+                Robot auv = new Robot();
+                MyGlobals.robot_list.Add(auv);
+            }
+        }
         public void update_robot_list()
         {
             for (int i = 0; i < MyGlobals.robot_list.Count; i++)
@@ -84,6 +98,7 @@ namespace MultiplePF
 
         private void getParticleCoordinates()
         {
+            NUMBER_OF_ROBOTS = 3;
             create_simulation();
             this.update_real_range_list();
             particle_filter.update_weights(this.real_range_list);
@@ -144,7 +159,7 @@ namespace MultiplePF
             chart1.Series["Shark"].Points.Clear();
             chart1.Series["AUV1"].Points.Clear();
             chart1.Series["AUV2"].Points.Clear();
-
+            chart1.Series["AUV3"].Points.Clear();
             chart1.Series["Shark"].Points.AddXY(MyGlobals.shark_list[0].X, MyGlobals.shark_list[0].Y);
 
             //add in one of pf2
@@ -165,6 +180,7 @@ namespace MultiplePF
             //double yes = particle_filter.r1.robot_list_y[0];
             chart1.Series["AUV1"].Points.AddXY(MyGlobals.robot_list[0].X, MyGlobals.robot_list[0].Y);
             chart1.Series["AUV2"].Points.AddXY(MyGlobals.robot_list[1].X, MyGlobals.robot_list[1].Y);
+            chart1.Series["AUV2"].Points.AddXY(MyGlobals.robot_list[2].X, MyGlobals.robot_list[2].Y);
 
         }
         private void chart1_Click(object sender, EventArgs e)
