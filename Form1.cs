@@ -13,16 +13,18 @@ namespace MultiplePF
 {
     public partial class Form1 : Form
     {
-        
+
         private Thread cpuThread;
-        List<double>  w1xList_pf1 = new List<double> ();
+        List<double> w1xList_pf1 = new List<double>();
         List<double> w1yList_pf1 = new List<double>();
         List<double> w2xList_pf1 = new List<double>();
         List<double> w2yList_pf1 = new List<double>();
         List<double> w3xList_pf1 = new List<double>();
         List<double> w3yList_pf1 = new List<double>();
-        ParticleFilter particle_filter = new ParticleFilter();
-        double NUMBER_OF_ROBOTS;
+        int NUMBER_OF_ROBOTS;
+        int NUMBER_OF_SHARKS;
+        int NUMBER_OF_PARTICLEFILTERS;
+        List<ParticleFilter> ParticleFilterList = new List<ParticleFilter>();
         Boolean stopHere = true;
         List<double> errorList = new List<double>();
         List<double> PredictedSharkXList = new List<double>();
@@ -39,7 +41,7 @@ namespace MultiplePF
             MyGlobals.shark_list.Add(MyGlobals.s1);
 
             create_robots();
-            particle_filter.create();
+            
         }
 
         private void update_weight_lists()
@@ -51,7 +53,17 @@ namespace MultiplePF
             w3yList_pf1 = particle_filter.w3_list_y;
             w3xList_pf1 = particle_filter.w3_list_x;
         }
-         public void update_real_range_list()
+        public void update_real_range_list()
+        {
+            this.real_range_list = new List<double>();
+            for (int i = 0; i < MyGlobals.robot_list.Count; i++)
+            {
+                double real_range1 = MyGlobals.robot_list[i].calc_range_error_real(MyGlobals.shark_list[0]);
+                this.real_range_list.Add(real_range1);
+            }
+        }
+
+        public void update_noisy_range_list()
         {
             this.real_range_list = new List<double>();
             for (int i = 0; i < MyGlobals.robot_list.Count; i++)
@@ -63,7 +75,7 @@ namespace MultiplePF
 
         public void create_robots()
         {
-            for (int i = 0; i< NUMBER_OF_ROBOTS; i++)
+            for (int i = 0; i < NUMBER_OF_ROBOTS; i++)
             {
                 Robot auv = new Robot();
                 MyGlobals.robot_list.Add(auv);
@@ -84,12 +96,48 @@ namespace MultiplePF
             double range_error = Math.Sqrt(x_component + y_component);
             return range_error;
         }
+        public void get_measurements()
+        {
+            get_noisy_measurements();
+            //get_real_measurements();
+        }
+
+        public void get_noisy_measurements()
+        {
+            update_robot_list();
+            update_noisy_range_list();
+        }
+
+        public void get_real_measurements()
+        {
+            update_robot_list();
+            update_real_range_list();
+        }
+
+        public void createParticleFilters()
+        {
+            for (int p = 0; p < NUMBER_OF_PARTICLEFILTERS; ++p)
+            {
+                ParticleFilter p1 = new ParticleFilter();
+                ParticleFilterList.Add(p1);
+                p1.create();
+            }
+            
+
+        }
 
         private void getParticleCoordinates()
         {
-            NUMBER_OF_ROBOTS = 3;
+            NUMBER_OF_ROBOTS = 2;
+            NUMBER_OF_SHARKS = 2;
+            NUMBER_OF_PARTICLEFILTERS = NUMBER_OF_ROBOTS * NUMBER_OF_SHARKS;
+
+            
+
             create_simulation();
-            this.update_real_range_list();
+            createParticleFilters();
+
+            this.update_noisy_range_list();
             particle_filter.update_weights(this.real_range_list);
             particle_filter.NUMBER_OF_AUVS = MyGlobals.robot_list.Count;
             double count = 0;
@@ -100,10 +148,10 @@ namespace MultiplePF
                 {
                     MyGlobals.shark_list[0].update_shark();
                 }
-                
-                update_robot_list();
-                update_real_range_list();
-                
+                //get real_measurements
+
+                get_measurements();
+
                 particle_filter.update();
                 particle_filter.update_weights(this.real_range_list);
                 particle_filter.correct();
@@ -148,7 +196,7 @@ namespace MultiplePF
             chart1.Series["Shark"].Points.Clear();
             chart1.Series["AUV1"].Points.Clear();
             chart1.Series["AUV2"].Points.Clear();
-            chart1.Series["AUV3"].Points.Clear();
+            //chart1.Series["AUV3"].Points.Clear();
             chart1.Series["Shark"].Points.AddXY(MyGlobals.shark_list[0].X, MyGlobals.shark_list[0].Y);
 
             //add in one of pf2
@@ -169,7 +217,7 @@ namespace MultiplePF
             //double yes = particle_filter.r1.robot_list_y[0];
             chart1.Series["AUV1"].Points.AddXY(MyGlobals.robot_list[0].X, MyGlobals.robot_list[0].Y);
             chart1.Series["AUV2"].Points.AddXY(MyGlobals.robot_list[1].X, MyGlobals.robot_list[1].Y);
-            chart1.Series["AUV2"].Points.AddXY(MyGlobals.robot_list[2].X, MyGlobals.robot_list[2].Y);
+            //chart1.Series["AUV3"].Points.AddXY(MyGlobals.robot_list[2].X, MyGlobals.robot_list[2].Y);
 
         }
         private void chart1_Click(object sender, EventArgs e)
