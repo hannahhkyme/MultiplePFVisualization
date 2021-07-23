@@ -37,12 +37,12 @@ namespace MultiplePF
         List<double> errorList = new List<double>();
         List<double> PredictedSharkXList = new List<double>();
         List<double> PredictedSharkYList = new List<double>();
-        List<double> real_range_list = new List<double>();
+        List<List<double>> real_range_list = new List<List<double>>();
         public Form1()
         {
             InitializeComponent();
             MyGlobals.robot_list = new List<Robot>();
-            this.real_range_list = new List<double>();
+            this.real_range_list = new List<List<double>>();
         }
         public void create_simulation()
         {
@@ -50,6 +50,85 @@ namespace MultiplePF
 
             create_robots();
             
+        }
+        public void create_robots()
+        {
+            for (int i = 0; i < NUMBER_OF_ROBOTS; i++)
+            {
+                Robot auv = new Robot();
+                MyGlobals.robot_list.Add(auv);
+            }
+        }
+        public void createParticleFilters()
+        {
+            for (int p = 0; p < NUMBER_OF_PARTICLEFILTERS; ++p)
+            {
+                ParticleFilter p1 = new ParticleFilter();
+                ParticleFilterList.Add(p1);
+                p1.create();
+            }
+
+
+        }
+        public void update_robot_list()
+        {
+            for (int i = 0; i < MyGlobals.robot_list.Count; i++)
+            {
+                MyGlobals.robot_list[i].update_robot_position();
+            }
+        }
+        public int what_robot(int index)
+        {
+            int robotNumber = index / NUMBER_OF_SHARKS;
+            return robotNumber;
+        }
+        public int what_shark(int index)
+        {
+            int sharkNumber = 0;
+            if (index % NUMBER_OF_SHARKS==0)
+            {
+                sharkNumber = 0;
+            }
+            else
+            {
+                sharkNumber = index % NUMBER_OF_SHARKS;
+            }
+            
+            return sharkNumber;
+        }
+        
+        //List<List<double>> real_range_list where the two lists inside are range lists per robot
+        public void update_real_range_list(int robotNumber)
+        {
+            for (int r = 0; r < MyGlobals.robot_list.Count; r++)
+            {
+                List<double> robotRangeList = new List<double>();
+                for (int s = 0; s < MyGlobals.shark_list.Count; s++)
+                {
+                    double real_range1 = MyGlobals.shark_list[s].calc_range_error_real(MyGlobals.robot_list[robotNumber]);
+                    robotRangeList.Add(real_range1);
+                }
+                this.real_range_list.Add(robotRangeList);
+            }
+        }
+
+        public void update_noisy_range_list()
+        {
+            for (int r = 0; r < MyGlobals.robot_list.Count; r++)
+            {
+                List<double> robotRangeList = new List<double>();
+                for (int s = 0; s < MyGlobals.shark_list.Count; s++)
+                {
+                    double real_range1 = MyGlobals.shark_list[s].calc_range_error(MyGlobals.robot_list[r]);
+                    robotRangeList.Add(real_range1);
+                }
+                this.real_range_list.Add(robotRangeList);
+            }
+        }
+        public void get_measurements()
+        {
+            update_noisy_range_list();
+            //get_real_measurements();
         }
 
         private void update_weight_lists(int index)
@@ -63,7 +142,7 @@ namespace MultiplePF
                 w3yList_pf1 = ParticleFilterList[index].w3_list_y;
                 w3xList_pf1 = ParticleFilterList[index].w3_list_x;
             }
-            if (index == 2)
+            if (index == 1)
             { 
                 w1xList_pf2 = ParticleFilterList[index].w1_list_x;
                 w1yList_pf2 = ParticleFilterList[index].w1_list_y;
@@ -74,94 +153,9 @@ namespace MultiplePF
             }
            
         }
-        public void update_real_range_list(int SharkNumber)
-        {
-            this.real_range_list = new List<double>();
-            for (int i = 0; i < MyGlobals.robot_list.Count; i++)
-            {
-                double real_range1 = MyGlobals.robot_list[i].calc_range_error_real(MyGlobals.shark_list[SharkNumber]);
-                this.real_range_list.Add(real_range1);
-            }
-        }
+        
 
-        public void update_noisy_range_list(int SharkNumber)
-        {
-            this.real_range_list = new List<double>();
-            for (int i = 0; i < MyGlobals.robot_list.Count; i++)
-            {
-                double real_range1 = MyGlobals.robot_list[i].calc_range_error(MyGlobals.shark_list[SharkNumber]);
-                this.real_range_list.Add(real_range1);
-            }
-        }
-
-        public int what_shark(int index)
-        {
-            int sharkNumber = 0;
-            if (index%NUMBER_OF_SHARKS == 0)
-            {
-                sharkNumber = NUMBER_OF_SHARKS;
-            }
-            else 
-            {
-                sharkNumber = index % NUMBER_OF_SHARKS;
-            }
-            int sharkIndex = sharkNumber - 1;
-            return sharkIndex;
-            // return sharkNUmber
-
-        }
-        public void create_robots()
-        {
-            for (int i = 0; i < NUMBER_OF_ROBOTS; i++)
-            {
-                Robot auv = new Robot();
-                MyGlobals.robot_list.Add(auv);
-            }
-        }
-        public void update_robot_list()
-        {
-            for (int i = 0; i < MyGlobals.robot_list.Count; i++)
-            {
-                MyGlobals.robot_list[i].update_robot_position();
-            }
-        }
-
-        public double calc_range_error(List<double> predict_shark_location)
-        {
-            double x_component = Math.Pow((MyGlobals.s1.X - predict_shark_location[0]), 2);
-            double y_component = Math.Pow((MyGlobals.s1.Y - predict_shark_location[1]), 2);
-            double range_error = Math.Sqrt(x_component + y_component);
-            return range_error;
-        }
-        public void get_measurements()
-        {
-            get_noisy_measurements();
-            //get_real_measurements();
-        }
-
-        public void get_noisy_measurements()
-        {
-            update_robot_list();
-            update_noisy_range_list();
-        }
-
-        public void get_real_measurements()
-        {
-            update_robot_list();
-            update_real_range_list();
-        }
-
-        public void createParticleFilters()
-        {
-            for (int p = 0; p < NUMBER_OF_PARTICLEFILTERS; ++p)
-            {
-                ParticleFilter p1 = new ParticleFilter();
-                ParticleFilterList.Add(p1);
-                p1.create();
-            }
-            
-
-        }
+        
 
         private void getParticleCoordinates()
         {
@@ -173,19 +167,23 @@ namespace MultiplePF
 
             create_simulation();
             createParticleFilters();
-            //updates PFs
+            
+
+            int robotNumber = 0;
+            get_measurements();
+
             int index = 0;
             foreach (ParticleFilter p1 in ParticleFilterList)
             {
                 index += 1;
-                int sharkNumber = what_shark(index);
-                this.update_noisy_range_list(sharkNumber);
-                p1.update_weights(this.real_range_list);
+                int SharkNumber = what_shark(index);
+                p1.update_weights(this.real_range_list, SharkNumber);
                 p1.NUMBER_OF_AUVS = MyGlobals.robot_list.Count;
             }
             double count = 0;
             while (stopHere)
             {
+                //updates shark position
                 count += 10;
                 if(count %80 == 0)
                 {   
@@ -194,34 +192,35 @@ namespace MultiplePF
                         MyGlobals.shark_list[i].update_shark();
                     }
                 }
-                //get real_measurements
-                // work on updating PF and real_range_measurements for each PF
+                //updates robot position
+                for (int i = 0; i < NUMBER_OF_ROBOTS; ++i)
+                {
+                    MyGlobals.robot_list[i].update_robot_position();
+                }
+                //calculates real_range_list
                 get_measurements();
+                int index2 = 0;
                 foreach (ParticleFilter p1 in ParticleFilterList)
                 {
+                    index2 += 1;
+                    int SharkNumber2 = what_shark(index2);
                     p1.update();
-                    p1.update_weights(this.real_range_list);
-                    p1.correct();  
+                    p1.update_weights(this.real_range_list, SharkNumber2);
+                    p1.correct();
                 }
-                
-                
-                foreach (ParticleFilter p1 in ParticleFilterList)
+
+                for (int i = 0; i < ParticleFilterList.Count(); ++i)
                 {
-                    p1.weight_list_x();
-                    p1.weight_list_y();
+                    //int sharkNumber = what_shark(i);
+                    ParticleFilterList[i].weight_list_x();
+                    ParticleFilterList[i].weight_list_y();
+                    update_weight_lists(i);
                 }
                 
-
-
-                // make coordinate list 
-                update_weight_lists();
+                //clear this.realrangelist
 
             }
-                // update_robot_location();
-
-                // range_error creator
-                // create_range_error();
-            }
+              
             if (chart1.IsHandleCreated)
             {
                 this.Invoke((MethodInvoker)delegate { UpdateMap(); });
@@ -240,9 +239,9 @@ namespace MultiplePF
             chart1.Series["Weight1"].Points.Clear();
             chart1.Series["Weight2"].Points.Clear();
             chart1.Series["Weight3"].Points.Clear();
-            chart1.Series["2ndWeight1"].Points.Clear();
-            chart1.Series["2ndWeight2"].Points.Clear();
-            chart1.Series["2ndWeight3"].Points.Clear();
+            chart1.Series["Weight1_2"].Points.Clear();
+            chart1.Series["Weight2_2"].Points.Clear();
+            chart1.Series["Weight3_2"].Points.Clear();
             chart1.Series["Shark"].Points.Clear();
             chart1.Series["Shark2"].Points.Clear();
             chart1.Series["AUV1"].Points.Clear();
@@ -268,15 +267,15 @@ namespace MultiplePF
 
             for (int i = 0; i < w1xList_pf2.Count; ++i)
             {
-                chart1.Series["2ndWeight1"].Points.AddXY(w1xList_pf2[i], w1yList_pf2[i]);
+                chart1.Series["Weight1_2"].Points.AddXY(w1xList_pf2[i], w1yList_pf2[i]);
             }
             for (int i = 0; i < w2xList_pf2.Count; ++i)
             {
-                chart1.Series["2ndWeight2"].Points.AddXY(w2xList_pf2[i], w2yList_pf2[i]);
+                chart1.Series["Weight2_2"].Points.AddXY(w2xList_pf2[i], w2yList_pf2[i]);
             }
             for (int i = 0; i < w3xList_pf2.Count; ++i)
             {
-                chart1.Series["2ndWeight3"].Points.AddXY(w3xList_pf2[i], w3yList_pf2[i]);
+                chart1.Series["Weight3_2"].Points.AddXY(w3xList_pf2[i], w3yList_pf2[i]);
             }
 
            //double hey = particle_filter.r1.robot_list_x.Count;

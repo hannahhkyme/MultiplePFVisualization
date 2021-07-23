@@ -72,19 +72,20 @@ namespace MultiplePF
             }
 
         }
-        public void update_weights(List<double> real_range_list)// real_range_list
+        public void update_weights(List<List<double>> real_range_list, int SharkNumber)// real_range_list
         {
             // normalize new weights for each new shark measurement
+            
+
             for (int i = 0; i< NUMBER_OF_PARTICLES; ++i)
             {
                 double current_weight = 1;
                 for (int r = 0; r < NUMBER_OF_AUVS; ++r)
                 {
                     double particle_range = particleList[i].calc_particle_range(MyGlobals.robot_list[r]);
-                    current_weight *= particleList[i].weight(real_range_list[r], particle_range);// real_range_list
-                    // real_range_list = [[range1], [range1]]
-                    // weight:       
+                    current_weight *= particleList[i].weight(real_range_list[r][SharkNumber], particle_range);// real_range_list
                 }
+               
                 // set weight to the particles
                 particleList[i].W = current_weight;
             }
