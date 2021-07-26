@@ -25,7 +25,7 @@ namespace MultiplePF
         public ParticleFilter()
         {
             this.Current_Time = 0;
-            this.NUMBER_OF_PARTICLES = 1000;
+            this.NUMBER_OF_PARTICLES = 3;
             this.r1 = new Robot();
             this.w1_list_x = new List<double>();
             this.w2_list_x = new List<double>();
@@ -83,6 +83,7 @@ namespace MultiplePF
                 for (int r = 0; r < NUMBER_OF_AUVS; ++r)
                 {
                     double particle_range = particleList[i].calc_particle_range(MyGlobals.robot_list[r]);
+                    double hi = real_range_list[r][SharkNumber];
                     current_weight *= particleList[i].weight(real_range_list[r][SharkNumber], particle_range);// real_range_list
                 }
                

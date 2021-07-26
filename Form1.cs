@@ -47,7 +47,7 @@ namespace MultiplePF
         public void create_simulation()
         {
             MyGlobals.shark_list.Add(MyGlobals.s1);
-
+            //MyGlobals.shark_list.Add(MyGlobals.s2);
             create_robots();
             
         }
@@ -159,17 +159,12 @@ namespace MultiplePF
 
         private void getParticleCoordinates()
         {
-            NUMBER_OF_ROBOTS = 2;
-            NUMBER_OF_SHARKS = 2;
+            NUMBER_OF_ROBOTS = 1;
+            NUMBER_OF_SHARKS = 1;
             NUMBER_OF_PARTICLEFILTERS = NUMBER_OF_ROBOTS * NUMBER_OF_SHARKS;
-
-            
-
             create_simulation();
             createParticleFilters();
             
-
-            int robotNumber = 0;
             get_measurements();
 
             int index = 0;
@@ -179,6 +174,7 @@ namespace MultiplePF
                 int SharkNumber = what_shark(index);
                 p1.update_weights(this.real_range_list, SharkNumber);
                 p1.NUMBER_OF_AUVS = MyGlobals.robot_list.Count;
+                
             }
             double count = 0;
             while (stopHere)
@@ -207,6 +203,7 @@ namespace MultiplePF
                     p1.update();
                     p1.update_weights(this.real_range_list, SharkNumber2);
                     p1.correct();
+                    
                 }
 
                 for (int i = 0; i < ParticleFilterList.Count(); ++i)
